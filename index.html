@@ -4,14 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
     <script
       src="https://cdn.plot.ly/plotly-3.0.0.min.js"
       charset="utf-8"
     ></script>
     <script src="https://unpkg.com/@sakitam-gis/kriging/dist/kriging.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   </head>
   <body>
-    <div id="plotDiv" style="width:800px;height:700px;"></div>
-    <script src="index.js"></script>
+    <div class="container">
+      <div class="left-sub-container">
+        <div class="file-upload-container">
+          <label for="fileInput" class="file-upload-label">
+            <span class="upload-icon">📁</span>
+            <span class="upload-text">IMPORT</span>
+          </label>
+          <input id="fileInput" type="file" class="file-input" />
+        </div>
+      </div>
+      <div class="right-sub-container"><div id="contourMap"></div></div>
+    </div>
   </body>
 </html>
