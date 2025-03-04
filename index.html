@@ -16,12 +16,51 @@
   <body>
     <div class="container">
       <div class="left-sub-container">
+        <div class="readme">
+          <h1>README</h1>
+          <p>Rules for uploading Excel file (.xlsx):</p>
+          <ul>
+            <li>Only the first sheet will be parsed;</li>
+            <li>4 columns required;</li>
+            <li>
+              First row is for headers: wellNames, x, y, z (order does not
+              matter);
+            </li>
+            <li>x (East), y (North) are coordinates;</li>
+            <li>z might be pressure, water cut, TVD etc.</li>
+          </ul>
+        </div>
         <div class="file-upload-container">
           <label for="fileInput" class="file-upload-label">
-            <span class="upload-icon">📁</span>
-            <span class="upload-text">IMPORT</span>
+            <span class="upload-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="green"
+                  d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5zM8.5 10h2L12 12l1.5-2h2L13 14l2.5 4h-2L12 16l-1.5 2h-2L10 14l-2.5-4z"
+                />
+              </svg>
+            </span>
+            <span class="upload-text">IMPORT EXCEL</span>
           </label>
           <input id="fileInput" type="file" class="file-input" />
+        </div>
+        <div class="configuration">
+          <div>
+            <label for="gridSizeDropdown">Select Grid Size:</label>
+            <select id="gridSizeDropdown">
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100" selected>100</option>
+              <option value="200">200</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="right-sub-container"><div id="contourMap"></div></div>

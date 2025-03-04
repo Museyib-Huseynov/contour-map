@@ -1,8 +1,57 @@
-let x, y, z, wellNames;
+const saturationColor = [
+  ['0.0', 'rgb(165,0,38)'],
+  ['0.111111111111', 'rgb(215,48,39)'],
+  ['0.222222222222', 'rgb(244,109,67)'],
+  ['0.333333333333', 'rgb(253,174,97)'],
+  ['0.444444444444', 'rgb(254,224,144)'],
+  ['0.555555555556', 'rgb(224,243,248)'],
+  ['0.666666666667', 'rgb(171,217,233)'],
+  ['0.777777777778', 'rgb(116,173,209)'],
+  ['0.888888888889', 'rgb(69,117,180)'],
+  ['1.0', 'rgb(49,54,149)'],
+];
 
-const fileInputTag = document.getElementById('fileInput');
+const pressureColor = [
+  ['0.0', 'rgb(165,0,38)'],
+  ['0.111111111111', 'rgb(215,48,39)'],
+  ['0.222222222222', 'rgb(244,109,67)'],
+  ['0.333333333333', 'rgb(253,174,97)'],
+  ['0.444444444444', 'rgb(254,224,144)'],
+  ['0.555555555556', 'rgb(224,243,248)'],
+  ['0.666666666667', 'rgb(171,217,233)'],
+  ['0.777777777778', 'rgb(116,173,209)'],
+  ['0.888888888889', 'rgb(69,117,180)'],
+  ['1.0', 'rgb(49,54,149)'],
+];
 
-fileInputTag.addEventListener('change', function (e) {
+const depthColor = [
+  ['0.0', 'rgb(165,0,38)'],
+  ['0.111111111111', 'rgb(215,48,39)'],
+  ['0.222222222222', 'rgb(244,109,67)'],
+  ['0.333333333333', 'rgb(253,174,97)'],
+  ['0.444444444444', 'rgb(254,224,144)'],
+  ['0.555555555556', 'rgb(224,243,248)'],
+  ['0.666666666667', 'rgb(171,217,233)'],
+  ['0.777777777778', 'rgb(116,173,209)'],
+  ['0.888888888889', 'rgb(69,117,180)'],
+  ['1.0', 'rgb(49,54,149)'],
+];
+
+let x,
+  y,
+  z,
+  wellNames,
+  gridSize = 100,
+  sigma2 = 0,
+  alpha = 100,
+  algorithm = 'kriging (spherical)',
+  color = 'saturation',
+  mapType = 'contour';
+
+const fileInput = document.getElementById('fileInput');
+const gridSizeDropdown = document.getElementById('gridSizeDropdown');
+
+fileInput.addEventListener('change', function (e) {
   let file = e.target.files[0];
   const reader = new FileReader();
   reader.readAsArrayBuffer(file);
@@ -14,14 +63,13 @@ fileInputTag.addEventListener('change', function (e) {
     const worksheet = workbook.Sheets[sheetName];
 
     const parsedData = XLSX.utils.sheet_to_json(worksheet);
+    console.log(parsedData);
     x = parsedData.map((i) => i.x);
     y = parsedData.map((i) => i.y);
     z = parsedData.map((i) => i.z);
     wellNames = parsedData.map((i) => i.wellNames);
 
     let model = 'spherical'; // Options: "exponential", "spherical", "gaussian"
-    let sigma2 = 0,
-      alpha = 100;
     let variogram = kriging.train(z, x, y, model, sigma2, alpha);
 
     let xMin = Math.min(...x) - 1;
@@ -32,7 +80,7 @@ fileInputTag.addEventListener('change', function (e) {
     let xRange = [xMin, xMax];
     let yRange = [yMin, yMax];
 
-    let gridSize = 50;
+    let gridSize = 100;
 
     let xGrid = Array.from(
       { length: gridSize },
@@ -63,7 +111,23 @@ fileInputTag.addEventListener('change', function (e) {
         ['0.888888888889', 'rgb(69,117,180)'],
         ['1.0', 'rgb(49,54,149)'],
       ],
-      contours: { showlabels: true, start: 0, end: 100, size: 4 },
+      contours: {
+        coloring: 'fill',
+        showlabels: true,
+        labelfont: {
+          size: 12, // Adjust label size
+          color: 'black',
+        },
+        start: 0,
+        end: 100,
+        size: 3,
+      },
+      line: {
+        width: '1',
+        smoothing: 1,
+      },
+      zmin: 0,
+      zmax: 100,
     };
 
     let scatterData = {
@@ -97,31 +161,56 @@ fileInputTag.addEventListener('change', function (e) {
   //
 });
 
-// let wells = [
-//   { x: 0, y: 0, z: 50, name: 'GUN 1' },
-//   { x: 1, y: 1, z: 50, name: 'GUN 2' },
-//   { x: -1, y: 1, z: 50, name: 'GUN 3' },
-//   { x: 1, y: -1, z: 50, name: 'GUN 4' },
-//   { x: -1, y: -1, z: 60, name: 'GUN 5' },
-//   { x: 2, y: 2, z: 60, name: 'GUN 6' },
-//   { x: -2, y: 2, z: 60, name: 'GUN 7' },
-//   { x: 2, y: -2, z: 60, name: 'GUN 8' },
-//   { x: -2, y: -2, z: 70, name: 'GUN 9' },
-//   { x: 3, y: 0, z: 70, name: 'GUN 10' },
-//   { x: -3, y: 0, z: 70, name: 'GUN 11' },
-//   { x: 0, y: 3, z: 70, name: 'GUN 12' },
-//   { x: 0, y: -3, z: 80, name: 'GUN 13' },
-//   { x: 4, y: 4, z: 80, name: 'GUN 14' },
-//   { x: -4, y: 4, z: 80, name: 'GUN 15' },
-//   { x: 4, y: -4, z: 80, name: 'GUN 16' },
-//   { x: -4, y: -4, z: 90, name: 'GUN 17' },
-//   { x: 5, y: 0, z: 90, name: 'GUN 18' },
-//   { x: -5, y: 0, z: 90, name: 'GUN 19' },
-//   { x: 0, y: 5, z: 90, name: 'GUN 20' },
-//   { x: 0, y: -5, z: 100, name: 'GUN 21' },
-// ];
+gridSizeDropdown.addEventListener('change', function (e) {
+  gridSize = parseInt(this.value);
+  console.log(gridSize);
+});
 
-// let x = wells.map((d) => d.x);
-// let y = wells.map((d) => d.y);
-// let z = wells.map((d) => d.z);
-// let names = wells.map((d) => d.name);
+function kriging_method(model) {
+  let variogram = kriging.train(z, x, y, model, sigma2, alpha);
+  return yGrid.map((yVal) =>
+    xGrid.map((xVal) => kriging.predict(xVal, yVal, variogram))
+  );
+}
+
+function updateMap(fn) {
+  let xMin = Math.min(...x) - 1;
+  let xMax = Math.max(...x) + 1;
+  let yMin = Math.min(...y) - 1;
+  let yMax = Math.max(...y) + 1;
+
+  let xRange = [xMin, xMax];
+  let yRange = [yMin, yMax];
+
+  let xGrid = Array.from(
+    { length: gridSize },
+    (_, i) => xRange[0] + (i * (xRange[1] - xRange[0])) / gridSize
+  );
+  let yGrid = Array.from(
+    { length: gridSize },
+    (_, i) => yRange[0] + (i * (yRange[1] - yRange[0])) / gridSize
+  );
+  let zGrid;
+
+  if (fn == 'kriging (exponential)') {
+    zGrid = kriging('exponential');
+  } else if (fn == 'kriging (spherical)') {
+    zGrid = kriging('exponential');
+  } else if (fn == 'kriging (gaussian)') {
+    zGrid = kriging('gaussian');
+  }
+
+  let contourData = {
+    x: xGrid,
+    y: yGrid,
+    z: zGrid,
+    type: mapType,
+    colorscale:
+      color == 'saturation'
+        ? saturationColor
+        : color == 'pressure'
+        ? pressureColor
+        : depthColor,
+    contours: { showlabels: true, start: 0, end: 100, size: 4 },
+  };
+}
