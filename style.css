@@ -80,8 +80,8 @@
 
   #contourMap {
     background-color: lightblue;
-    width: 100%;
-    aspect-ratio: 1 / 1;
+    /* width: 100%; */
+    /* aspect-ratio: 1 / 1; */
     /* border: 1px dashed #000; */
   }
 }

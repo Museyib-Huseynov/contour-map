@@ -44,9 +44,14 @@ let x,
   gridSize = 100,
   sigma2 = 0,
   alpha = 100,
+  mapType = 'contour',
   algorithm = 'kriging (spherical)',
   color = 'saturation',
-  mapType = 'contour';
+  contour_coloring = 'fill',
+  show_contour_labels = true,
+  zStart = 0,
+  zEnd = 100,
+  zStepSize = 4;
 
 const fileInput = document.getElementById('fileInput');
 const gridSizeDropdown = document.getElementById('gridSizeDropdown');
@@ -192,12 +197,12 @@ function updateMap(fn) {
   );
   let zGrid;
 
-  if (fn == 'kriging (exponential)') {
-    zGrid = kriging('exponential');
-  } else if (fn == 'kriging (spherical)') {
-    zGrid = kriging('exponential');
-  } else if (fn == 'kriging (gaussian)') {
-    zGrid = kriging('gaussian');
+  if (algorithm == 'kriging (exponential)') {
+    zGrid = kriging_method('exponential');
+  } else if (algorithm == 'kriging (spherical)') {
+    zGrid = kriging_method('exponential');
+  } else if (algorithm == 'kriging (gaussian)') {
+    zGrid = kriging_method('gaussian');
   }
 
   let contourData = {
@@ -211,6 +216,12 @@ function updateMap(fn) {
         : color == 'pressure'
         ? pressureColor
         : depthColor,
-    contours: { showlabels: true, start: 0, end: 100, size: 4 },
+    contours: {
+      coloring: contour_coloring,
+      showlabels: show_contour_labels,
+      start: zStart,
+      end: zEnd,
+      size: zStepSize,
+    },
   };
 }
