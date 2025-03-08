@@ -9,6 +9,19 @@
   user-select: none;
 }
 
+.modebar {
+  left: 0;
+}
+
+.modebar-btn {
+  transform: scale(1.5); /* Makes buttons 1.5x bigger */
+}
+
+.modebar-btn svg {
+  width: 30px !important;
+  height: 30px !important;
+}
+
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -24,64 +37,90 @@
 
 .left-sub-container {
   padding-left: 10px;
+}
 
-  .readme {
-    /* border: 1px solid grey; */
-    h1 {
-      font-size: 24px;
-    }
-    ul {
-      margin-left: 20px;
-      font-style: italic;
-    }
-  }
+.readme h1 {
+  font-size: 24px;
+}
 
-  .file-upload-container {
-    margin: 20px 0;
-    width: fit-content;
-    position: relative;
+.readme ul {
+  margin-left: 20px;
+  font-style: italic;
+}
 
-    .file-upload-label {
-      display: inline-flex;
-      align-items: center;
-      padding: 12px 20px;
-      border: 2px solid #007bff;
-      border-radius: 5px;
-      background-color: #ffffff;
-      color: #007bff;
-      cursor: pointer;
-      transition: background-color 0.3s, border-color 0.3s;
-      letter-spacing: 3px;
-      font-weight: bold;
-    }
+.file-upload-container {
+  margin: 20px 0;
+  width: fit-content;
+  position: relative;
+}
 
-    .file-upload-label:hover {
-      background-color: #e7f0ff;
-      border-color: #0056b3;
-    }
+.file-upload-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 20px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #007bff;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
 
-    .file-upload-label:active {
-      background-color: #d6e4ff;
-    }
+.file-upload-label:hover {
+  background-color: #e7f0ff;
+  border-color: #0056b3;
+}
 
-    .upload-icon {
-      margin-right: 8px;
-      font-size: 24px;
-    }
+.file-upload-label:active {
+  background-color: #d6e4ff;
+}
 
-    .file-input {
-      display: none;
-    }
-  }
+.upload-icon {
+  margin-right: 8px;
+  font-size: 24px;
+}
+
+.file-input {
+  display: none;
+}
+
+.configuration {
+  display: none;
 }
 
 .right-sub-container {
   display: grid;
+  position: relative;
+}
 
-  #contourMap {
-    background-color: lightblue;
-    /* width: 100%; */
-    /* aspect-ratio: 1 / 1; */
-    /* border: 1px dashed #000; */
+#map {
+  width: 100%;
+  height: 100%;
+  background-color: lightblue;
+}
+
+.spinner {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid lightblue;
+  width: 240px;
+  height: 240px;
+  animation: spin 1s linear infinite;
+  z-index: 1000;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
