@@ -2,7 +2,6 @@ const map = document.getElementById('map');
 const fileInput = document.getElementById('fileInput');
 const loadingIndicator = document.querySelector('.spinner');
 const configurationContainer = document.querySelector('.configuration');
-const mapTypeDropdown = document.getElementById('mapTypeDropdown');
 const gridSizeDropdown = document.getElementById('gridSizeDropdown');
 
 const saturationColor = [
@@ -33,15 +32,19 @@ let x,
   y,
   z,
   wellNames,
+  algorithm = 'IDW',
+  kriging_model = 'spherical',
+  sigma2 = 0,
+  alpha = 100,
+  idwPower = 2,
   currentWorker = null,
   lastWorkerParams = null,
   isWorkerCompleted = false,
-  cachedZGrid = null,
   gridSize = 100,
-  sigma2 = 0,
-  alpha = 100,
+  cachedXGrid = null,
+  cachedYGrid = null,
+  cachedZGrid = null,
   mapType = 'contour',
-  algorithm = 'kriging (spherical)',
   contour_map_color = 'saturation',
   contour_map_coloring = 'fill',
   contour_line_color = 'grey',
@@ -87,9 +90,11 @@ fileInput.addEventListener('change', function (e) {
   //
 });
 
-mapTypeDropdown.addEventListener('change', function (e) {
-  mapType = this.value;
-  calculateMap();
+document.querySelectorAll('input[name="mapType"]').forEach((radio) => {
+  radio.addEventListener('change', function () {
+    mapType = this.value;
+    calculateMap();
+  });
 });
 
 gridSizeDropdown.addEventListener('change', function (e) {
@@ -105,39 +110,26 @@ contourMapColorDropdown.addEventListener('change', function (e) {
 async function calculateMap() {
   if (currentWorker) {
     currentWorker.terminate();
-    console.log('terminate');
   }
 
   showLoading();
 
   await new Promise((resolve) => setTimeout(resolve, 0));
 
-  let xMin = Math.min(...x) - xMinExtend;
-  let xMax = Math.max(...x) + xMaxExtend;
-  let yMin = Math.min(...y) - yMinExtend;
-  let yMax = Math.max(...y) + yMaxExtend;
-
-  let xRange = [xMin, xMax];
-  let yRange = [yMin, yMax];
-
-  let xGrid = Array.from(
-    { length: gridSize },
-    (_, i) => xRange[0] + (i * (xRange[1] - xRange[0])) / gridSize
-  );
-  let yGrid = Array.from(
-    { length: gridSize },
-    (_, i) => yRange[0] + (i * (yRange[1] - yRange[0])) / gridSize
-  );
-
   let currentWorkerParams = {
-    xGrid,
-    yGrid,
-    algorithm,
-    sigma2,
-    alpha,
     x,
     y,
     z,
+    gridSize,
+    algorithm,
+    kriging_model,
+    sigma2,
+    alpha,
+    idwPower,
+    xMinExtend,
+    xMaxExtend,
+    yMinExtend,
+    yMaxExtend,
   };
 
   if (
@@ -145,9 +137,8 @@ async function calculateMap() {
     JSON.stringify(lastWorkerParams) == JSON.stringify(currentWorkerParams) &&
     isWorkerCompleted
   ) {
-    console.log('cached one used');
     hideLoading();
-    drawMap(cachedZGrid, xGrid, yGrid);
+    drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
     return;
   }
 
@@ -158,11 +149,12 @@ async function calculateMap() {
   currentWorker.postMessage(currentWorkerParams);
 
   currentWorker.onmessage = function (e) {
-    console.log('new one used');
+    cachedXGrid = e.data.xGrid;
+    cachedYGrid = e.data.yGrid;
     cachedZGrid = e.data.zGrid;
     isWorkerCompleted = true;
     hideLoading();
-    drawMap(cachedZGrid, xGrid, yGrid);
+    drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
     configurationContainer.style.display = 'block';
   };
 }
@@ -246,13 +238,11 @@ function drawMap(zGrid, xGrid, yGrid) {
 }
 
 function showLoading() {
-  console.log('Showing loading spinner...');
   map.style.display = 'none';
   loadingIndicator.style.display = 'block';
 }
 
 function hideLoading() {
-  console.log('Hiding loading spinner...');
   map.style.display = 'block';
   loadingIndicator.style.display = 'none';
 }

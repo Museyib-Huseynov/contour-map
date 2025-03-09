@@ -50,13 +50,19 @@
           <input id="fileInput" type="file" class="file-input" />
         </div>
         <div class="configuration">
-          <div class="mapTypeDropdown-container">
-            <label for="mapTypeDropdown">Map type</label>
-            <select id="mapTypeDropdown">
-              <option value="contour">contour</option>
-              <option value="heatmap">heatmap</option>
-            </select>
+          <div class="mapTypeRadio-container">
+            <label for="contour">Contour Map</label>
+            <input
+              type="radio"
+              id="contour"
+              name="mapType"
+              value="contour"
+              checked
+            />
+            <input type="radio" id="heatmap" name="mapType" value="heatmap" />
+            <label for="heatmap">Heatmap</label>
           </div>
+
           <div class="gridSizeDropdown-container">
             <label for="gridSizeDropdown">Grid Size:</label>
             <select id="gridSizeDropdown">
@@ -73,6 +79,7 @@
             <select id="contourMapColorDropdown">
               <option value="saturation">saturation</option>
               <option value="pressure">pressure</option>
+              <option value="depth">depth</option>
             </select>
           </div>
         </div>
