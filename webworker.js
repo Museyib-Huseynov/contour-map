@@ -1,4 +1,5 @@
 self.onmessage = function (e) {
+  console.log('web worker run...');
   const { xGrid, yGrid, algorithm, sigma2, alpha, x, y, z } = e.data;
 
   importScripts('https://unpkg.com/@sakitam-gis/kriging/dist/kriging.js');

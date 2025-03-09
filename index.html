@@ -50,8 +50,15 @@
           <input id="fileInput" type="file" class="file-input" />
         </div>
         <div class="configuration">
-          <div>
-            <label for="gridSizeDropdown">Select Grid Size:</label>
+          <div class="mapTypeDropdown-container">
+            <label for="mapTypeDropdown">Map type</label>
+            <select id="mapTypeDropdown">
+              <option value="contour">contour</option>
+              <option value="heatmap">heatmap</option>
+            </select>
+          </div>
+          <div class="gridSizeDropdown-container">
+            <label for="gridSizeDropdown">Grid Size:</label>
             <select id="gridSizeDropdown">
               <option value="10">10</option>
               <option value="50">50</option>
@@ -59,6 +66,13 @@
               <option value="200">200</option>
               <option value="500">500</option>
               <option value="1000">1000</option>
+            </select>
+          </div>
+          <div class="contourMapColorDropdown-container">
+            <label for="contourMapColorDropdown">Map color</label>
+            <select id="contourMapColorDropdown">
+              <option value="saturation">saturation</option>
+              <option value="pressure">pressure</option>
             </select>
           </div>
         </div>

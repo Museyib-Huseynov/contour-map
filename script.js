@@ -1,40 +1,32 @@
+const map = document.getElementById('map');
+const fileInput = document.getElementById('fileInput');
+const loadingIndicator = document.querySelector('.spinner');
+const configurationContainer = document.querySelector('.configuration');
+const mapTypeDropdown = document.getElementById('mapTypeDropdown');
+const gridSizeDropdown = document.getElementById('gridSizeDropdown');
+
 const saturationColor = [
   ['0.0', 'rgb(165,0,38)'],
-  ['0.111111111111', 'rgb(215,48,39)'],
-  ['0.222222222222', 'rgb(244,109,67)'],
-  ['0.333333333333', 'rgb(253,174,97)'],
-  ['0.444444444444', 'rgb(254,224,144)'],
-  ['0.555555555556', 'rgb(224,243,248)'],
-  ['0.666666666667', 'rgb(171,217,233)'],
-  ['0.777777777778', 'rgb(116,173,209)'],
-  ['0.888888888889', 'rgb(69,117,180)'],
-  ['1.0', 'rgb(49,54,149)'],
+  ['0.3', 'rgb(253,174,97)'],
+  ['0.4', 'rgb(224,243,248)'],
+  ['0.6', 'rgb(69,117,180)'],
+  ['1.0', 'rgb(0,0,128)'],
 ];
 
 const pressureColor = [
-  ['0.0', 'rgb(165,0,38)'],
-  ['0.111111111111', 'rgb(215,48,39)'],
-  ['0.222222222222', 'rgb(244,109,67)'],
-  ['0.333333333333', 'rgb(253,174,97)'],
-  ['0.444444444444', 'rgb(254,224,144)'],
-  ['0.555555555556', 'rgb(224,243,248)'],
-  ['0.666666666667', 'rgb(171,217,233)'],
-  ['0.777777777778', 'rgb(116,173,209)'],
-  ['0.888888888889', 'rgb(69,117,180)'],
-  ['1.0', 'rgb(49,54,149)'],
+  ['0.0', 'rgb(0,0,128)'],
+  ['0.3', 'rgb(69,117,180)'],
+  ['0.5', 'rgb(224,243,248)'],
+  ['0.75', 'rgb(253,174,97)'],
+  ['1.0', 'rgb(165,0,38)'],
 ];
 
 const depthColor = [
-  ['0.0', 'rgb(165,0,38)'],
-  ['0.111111111111', 'rgb(215,48,39)'],
-  ['0.222222222222', 'rgb(244,109,67)'],
-  ['0.333333333333', 'rgb(253,174,97)'],
-  ['0.444444444444', 'rgb(254,224,144)'],
-  ['0.555555555556', 'rgb(224,243,248)'],
-  ['0.666666666667', 'rgb(171,217,233)'],
-  ['0.777777777778', 'rgb(116,173,209)'],
-  ['0.888888888889', 'rgb(69,117,180)'],
-  ['1.0', 'rgb(49,54,149)'],
+  ['0.0', 'rgb(255,255,178)'],
+  ['0.3', 'rgb(189,220,175)'],
+  ['0.5', 'rgb(116,173,209)'],
+  ['0.75', 'rgb(49,117,180)'],
+  ['1.0', 'rgb(0,0,128)'],
 ];
 
 let x,
@@ -43,6 +35,7 @@ let x,
   wellNames,
   currentWorker = null,
   lastWorkerParams = null,
+  isWorkerCompleted = false,
   cachedZGrid = null,
   gridSize = 100,
   sigma2 = 0,
@@ -69,12 +62,6 @@ let x,
   scatter_marker_text_color = 'black',
   mapName = 'Iso-Map';
 
-const map = document.getElementById('map');
-const fileInput = document.getElementById('fileInput');
-const gridSizeDropdown = document.getElementById('gridSizeDropdown');
-const loadingIndicator = document.querySelector('.spinner');
-const configurationContainer = document.querySelector('.configuration');
-
 fileInput.addEventListener('change', function (e) {
   let file = e.target.files[0];
   if (!file) return;
@@ -95,22 +82,35 @@ fileInput.addEventListener('change', function (e) {
     z = parsedData.map((i) => i.z);
     wellNames = parsedData.map((i) => i.wellNames);
 
-    updateMap();
+    calculateMap();
   };
   //
 });
 
-gridSizeDropdown.addEventListener('change', function (e) {
-  gridSize = parseInt(this.value);
-  updateMap();
+mapTypeDropdown.addEventListener('change', function (e) {
+  mapType = this.value;
+  calculateMap();
 });
 
-function updateMap() {
+gridSizeDropdown.addEventListener('change', function (e) {
+  gridSize = parseInt(this.value);
+  calculateMap();
+});
+
+contourMapColorDropdown.addEventListener('change', function (e) {
+  contour_map_color = this.value;
+  calculateMap();
+});
+
+async function calculateMap() {
   if (currentWorker) {
     currentWorker.terminate();
+    console.log('terminate');
   }
 
   showLoading();
+
+  await new Promise((resolve) => setTimeout(resolve, 0));
 
   let xMin = Math.min(...x) - xMinExtend;
   let xMax = Math.max(...x) + xMaxExtend;
@@ -129,24 +129,38 @@ function updateMap() {
     (_, i) => yRange[0] + (i * (yRange[1] - yRange[0])) / gridSize
   );
 
-  let currentWorkerParams = { xGrid, yGrid, algorithm, sigma2, alpha, x, y, z };
+  let currentWorkerParams = {
+    xGrid,
+    yGrid,
+    algorithm,
+    sigma2,
+    alpha,
+    x,
+    y,
+    z,
+  };
 
   if (
     lastWorkerParams &&
-    JSON.stringify(lastWorkerParams) == JSON.stringify(currentWorkerParams)
+    JSON.stringify(lastWorkerParams) == JSON.stringify(currentWorkerParams) &&
+    isWorkerCompleted
   ) {
+    console.log('cached one used');
+    hideLoading();
     drawMap(cachedZGrid, xGrid, yGrid);
-    configurationContainer.style.display = 'block';
     return;
   }
 
   lastWorkerParams = currentWorkerParams;
 
+  isWorkerCompleted = false;
   currentWorker = new Worker('webworker.js');
   currentWorker.postMessage(currentWorkerParams);
 
   currentWorker.onmessage = function (e) {
+    console.log('new one used');
     cachedZGrid = e.data.zGrid;
+    isWorkerCompleted = true;
     hideLoading();
     drawMap(cachedZGrid, xGrid, yGrid);
     configurationContainer.style.display = 'block';
