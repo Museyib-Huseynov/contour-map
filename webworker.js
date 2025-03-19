@@ -41,7 +41,7 @@ self.onmessage = function (e) {
         return kriging_method(kriging_model, xVal, yVal);
       })
     );
-  } else if (algorithm === 'IDW') {
+  } else if (algorithm == 'IDW') {
     zGrid = inverseDistanceWeighting(xGrid, yGrid, x, y, z, idwPower);
   }
 

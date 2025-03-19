@@ -1,7 +1,7 @@
 const map = document.getElementById('map');
 const fileInput = document.getElementById('fileInput');
 const loadingIndicator = document.querySelector('.spinner');
-const configurationContainer = document.querySelector('.configuration');
+const configurationContainer = document.querySelector('.settings');
 const gridSizeDropdown = document.getElementById('gridSizeDropdown');
 
 const saturationColor = [
@@ -155,7 +155,7 @@ async function calculateMap() {
     isWorkerCompleted = true;
     hideLoading();
     drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
-    configurationContainer.style.display = 'block';
+    configurationContainer.style.display = 'grid';
   };
 }
 
@@ -165,7 +165,7 @@ function drawMap(zGrid, xGrid, yGrid) {
     x: xGrid,
     y: yGrid,
     z: zGrid,
-    hoverinfo: 'z',
+    hoverinfo: 'x+y+z',
     colorscale:
       contour_map_color == 'saturation'
         ? saturationColor
@@ -230,7 +230,9 @@ function drawMap(zGrid, xGrid, yGrid) {
       'zoom2d',
       'autoScale2d',
     ],
-    modeBarButtons: [['zoomIn2d', 'zoomOut2d', 'resetScale2d', 'toImage']],
+    modeBarButtons: [
+      ['zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'resetScale2d', 'toImage'],
+    ],
     responsive: true,
   };
 

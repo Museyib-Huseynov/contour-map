@@ -49,39 +49,55 @@
           </label>
           <input id="fileInput" type="file" class="file-input" />
         </div>
-        <div class="configuration">
-          <div class="mapTypeRadio-container">
-            <label for="contour">Contour Map</label>
-            <input
-              type="radio"
-              id="contour"
-              name="mapType"
-              value="contour"
-              checked
-            />
-            <input type="radio" id="heatmap" name="mapType" value="heatmap" />
-            <label for="heatmap">Heatmap</label>
+        <div class="settings">
+          <h1>Map Settings</h1>
+
+          <div class="settings-left">
+            <div class="mapTypeRadio-container">
+              <div>
+                <label for="contour">Contour Map</label>
+                <input
+                  type="radio"
+                  id="contour"
+                  name="mapType"
+                  value="contour"
+                  checked
+                />
+              </div>
+              <div>
+                <label for="heatmap">Heatmap</label>
+                <input
+                  type="radio"
+                  id="heatmap"
+                  name="mapType"
+                  value="heatmap"
+                />
+              </div>
+            </div>
+
+            <div class="gridSizeDropdown-container">
+              <label for="gridSizeDropdown">Grid Size</label>
+              <select id="gridSizeDropdown">
+                <option value="10">10 x 10</option>
+                <option value="50">50 x 50</option>
+                <option value="100" selected>100 x 100</option>
+                <option value="200">200 x 200</option>
+                <option value="500">500 x 500</option>
+                <option value="1000">1000 x 1000</option>
+              </select>
+            </div>
+
+            <div class="contourMapColorDropdown-container">
+              <label for="contourMapColorDropdown">Map color</label>
+              <select id="contourMapColorDropdown">
+                <option value="saturation">saturation</option>
+                <option value="pressure">pressure</option>
+                <option value="depth">depth</option>
+              </select>
+            </div>
           </div>
 
-          <div class="gridSizeDropdown-container">
-            <label for="gridSizeDropdown">Grid Size:</label>
-            <select id="gridSizeDropdown">
-              <option value="10">10</option>
-              <option value="50">50</option>
-              <option value="100" selected>100</option>
-              <option value="200">200</option>
-              <option value="500">500</option>
-              <option value="1000">1000</option>
-            </select>
-          </div>
-          <div class="contourMapColorDropdown-container">
-            <label for="contourMapColorDropdown">Map color</label>
-            <select id="contourMapColorDropdown">
-              <option value="saturation">saturation</option>
-              <option value="pressure">pressure</option>
-              <option value="depth">depth</option>
-            </select>
-          </div>
+          <div class="settings-right"></div>
         </div>
       </div>
       <div class="right-sub-container">

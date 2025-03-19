@@ -36,7 +36,9 @@
 }
 
 .left-sub-container {
-  padding-left: 10px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  padding: 0 10px;
 }
 
 .readme h1 {
@@ -86,28 +88,65 @@
   display: none;
 }
 
-.configuration {
+.settings {
   display: none;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 40px 1fr;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border: 1px solid gray;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.settings h1 {
+  text-align: left;
+  font-size: 20px;
+  grid-area: 1 / 1 / 2 / 3;
+}
+
+.mapTypeRadio-container label,
+.gridSizeDropdown-container label,
+.contourMapColorDropdown-container label {
+  display: inline-block;
+  width: 120px;
+  text-align: right;
+}
+
+.mapTypeRadio-container input {
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+.mapTypeRadio-container div {
+  margin-bottom: 10px;
+}
+
+.gridSizeDropdown-container,
+.contourMapColorDropdown-container {
+  margin: 20px 0;
+}
+
+#gridSizeDropdown,
+#contourMapColorDropdown {
+  vertical-align: middle;
+  margin-left: 10px;
+  width: 120px;
 }
 
 .right-sub-container {
   display: grid;
-  position: relative;
+  place-items: center;
 }
 
 #map {
+  background-color: lightblue;
   width: 100%;
   height: 100%;
-  aspect-ratio: 1 / 1;
-  background-color: lightblue;
 }
 
 .spinner {
   display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   border: 16px solid #f3f3f3;
   border-radius: 50%;
   border-top: 16px solid lightblue;
@@ -119,9 +158,9 @@
 
 @keyframes spin {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg);
+    transform: rotate(360deg);
   }
 }
