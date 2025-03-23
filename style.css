@@ -100,17 +100,35 @@
 }
 
 .settings h1 {
-  text-align: left;
+  text-align: center;
   font-size: 20px;
   grid-area: 1 / 1 / 2 / 3;
 }
 
 .mapTypeRadio-container label,
 .gridSizeDropdown-container label,
-.contourMapColorDropdown-container label {
+.mapColorDropdown-container label,
+.contourMapColoring-container label,
+.showLabels-container label,
+.zLimits-container label,
+.zStep-container label,
+.contourLineColor-container label,
+.contourLineWidth-container label,
+.smoothing-container label,
+.showLines-container label,
+.labelColor-container label,
+.labelFontSize-container label,
+.algorithm-container label,
+.krigingModel-container label,
+.errorVariance-container label,
+.spatialRange-container label,
+.markerSize-container label,
+.markerColor-container label,
+.idwPow-container label {
   display: inline-block;
-  width: 120px;
+  width: 190px;
   text-align: right;
+  font-size: 14px;
 }
 
 .mapTypeRadio-container input {
@@ -123,15 +141,84 @@
 }
 
 .gridSizeDropdown-container,
-.contourMapColorDropdown-container {
+.mapColorDropdown-container,
+.contourMapColoring-container,
+.showLabels-container,
+.zLimits-container,
+.zStep-container,
+.contourLineColor-container,
+.contourLineWidth-container,
+.smoothing-container,
+.showLines-container,
+.labelColor-container,
+.labelFontSize-container,
+.algorithm-container,
+.krigingModel-container,
+.errorVariance-container,
+.spatialRange-container,
+.markerSize-container,
+.markerColor-container,
+.idwPow-container {
   margin: 20px 0;
 }
 
 #gridSizeDropdown,
-#contourMapColorDropdown {
+#mapColorDropdown,
+#contourMapColoringDropdown,
+#zMinLimit,
+#zMaxLimit,
+#zStep,
+#contourLineColor,
+#contourLineWidthDropdown,
+#smoothing,
+#labelColor,
+#labelFontSizeDropdown,
+#algorithmDropdown,
+#krigingModelDropdown,
+#errorVariance,
+#spatialRange,
+#markerSize,
+#markerColor,
+#idwPow {
   vertical-align: middle;
   margin-left: 10px;
-  width: 120px;
+  width: 90px;
+  padding: 2px;
+  font-size: 14px;
+}
+
+#zMinLimit,
+#zMaxLimit,
+#zStep,
+#contourLineWidthDropdown,
+#labelFontSizeDropdown,
+#errorVariance,
+#markerSize,
+#idwPow {
+  text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#showLabelsCheckbox,
+#showLinesCheckbox {
+  margin-left: 14px;
+  vertical-align: middle;
+  transform: scale(1.5);
+}
+
+#reset {
+  position: relative;
+  left: 210px;
+  padding: 10px;
+  border-radius: 5px;
+  outline: none;
+  /* border: none; */
+  cursor: pointer;
 }
 
 .right-sub-container {
@@ -163,4 +250,8 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+span {
+  font-size: 14px;
 }
