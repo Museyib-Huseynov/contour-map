@@ -294,7 +294,8 @@ span {
   .markerColor-container label,
   .idwPow-container label,
   .xLimits-container label,
-  .yLimits-container label {
+  .yLimits-container label,
+  .mapName-container label {
     width: 120px;
   }
 
