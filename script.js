@@ -29,6 +29,11 @@ const markerSize = document.getElementById('markerSize');
 const markerColor = document.getElementById('markerColor');
 const reset = document.getElementById('reset');
 const idwPow = document.getElementById('idwPow');
+const xMinLimit = document.getElementById('xMinLimit');
+const xMaxLimit = document.getElementById('xMaxLimit');
+const yMinLimit = document.getElementById('yMinLimit');
+const yMaxLimit = document.getElementById('yMaxLimit');
+const mapName = document.getElementById('mapName');
 
 zStep.value = 1;
 
@@ -91,8 +96,7 @@ let x,
   zStepSize = 1,
   scatter_marker_color = 'black',
   scatter_marker_size = 12,
-  scatter_marker_text_position = 'top left',
-  mapName = 'Iso-Map';
+  mapNaming = 'Iso-Map';
 
 fileInput.addEventListener('change', function (e) {
   let file = e.target.files[0];
@@ -189,6 +193,56 @@ mapColorDropdown.addEventListener('change', function (e) {
   calculateMap();
 });
 
+markerSize.addEventListener('change', function (e) {
+  scatter_marker_size = this.value;
+  calculateMap();
+});
+
+markerColor.addEventListener('change', function (e) {
+  scatter_marker_color = this.value;
+  calculateMap();
+});
+
+xMinLimit.addEventListener('change', function (e) {
+  xMin = +this.value;
+  calculateMap();
+});
+
+xMaxLimit.addEventListener('change', function (e) {
+  xMax = +this.value;
+  calculateMap();
+});
+
+yMinLimit.addEventListener('change', function (e) {
+  yMin = +this.value;
+  calculateMap();
+});
+
+yMaxLimit.addEventListener('change', function (e) {
+  yMax = +this.value;
+  calculateMap();
+});
+
+zMinLimit.addEventListener('change', function (e) {
+  zMin = +this.value;
+  calculateMap();
+});
+
+zMaxLimit.addEventListener('change', function (e) {
+  zMax = +this.value;
+  calculateMap();
+});
+
+mapName.addEventListener('change', function (e) {
+  mapNaming = this.value;
+  calculateMap();
+});
+
+zStep.addEventListener('change', function (e) {
+  zStepSize = parseFloat(this.value);
+  calculateMap();
+});
+
 contourMapColoringDropdown.addEventListener('change', function (e) {
   contour_map_coloring = this.value;
   if (contour_map_coloring == 'fill') {
@@ -228,70 +282,6 @@ showLinesCheckbox.addEventListener('change', function (e) {
   calculateMap();
 });
 
-showLabelsCheckbox.addEventListener('change', function (e) {
-  show_contour_labels = this.checked;
-  if (show_contour_labels == false) {
-    document.querySelector('.labelColor-container').style.display = 'none';
-    document.querySelector('.labelFontSize-container').style.display = 'none';
-  } else {
-    document.querySelector('.labelColor-container').style.display = 'block';
-    document.querySelector('.labelFontSize-container').style.display = 'block';
-  }
-  calculateMap();
-});
-
-zMinLimit.addEventListener('change', function (e) {
-  zMin = this.value;
-  calculateMap();
-});
-
-zMaxLimit.addEventListener('change', function (e) {
-  zMax = this.value;
-  calculateMap();
-});
-
-markerSize.addEventListener('change', function (e) {
-  scatter_marker_size = this.value;
-  calculateMap();
-});
-
-markerColor.addEventListener('change', function (e) {
-  scatter_marker_color = this.value;
-  calculateMap();
-});
-
-reset.addEventListener('click', function (e) {
-  algorithm = 'kriging';
-  kriging_model = 'spherical';
-  sigma2 = 0;
-  alpha = 100;
-  idwPower = 2;
-  gridSize = 100;
-  mapType = 'contour';
-  map_color = 'saturation';
-  contour_map_coloring = 'fill';
-  show_contour_lines = true;
-  contour_line_color = '#808080';
-  contour_line_width = 0.5;
-  contour_line_smoothing = 0;
-  show_contour_labels = true;
-  contour_label_color = '#808080';
-  contour_label_font_size = 14;
-  zMin = Math.min(...z);
-  zMax = Math.max(...z);
-  zStepSize = 1;
-  scatter_marker_color = 'black';
-  scatter_marker_size = 12;
-  scatter_marker_text_position = 'top left';
-  mapName = 'Iso-Map';
-  calculateMap();
-});
-
-zStep.addEventListener('change', function (e) {
-  zStepSize = parseFloat(this.value);
-  calculateMap();
-});
-
 contourLineColor.addEventListener('change', function (e) {
   contour_line_color = this.value;
   calculateMap();
@@ -305,6 +295,18 @@ contourLineWidthDropdown.addEventListener('change', function (e) {
 smoothing.addEventListener('change', function (e) {
   contour_line_smoothing = this.value;
   smoothingValue.innerText = contour_line_smoothing;
+  calculateMap();
+});
+
+showLabelsCheckbox.addEventListener('change', function (e) {
+  show_contour_labels = this.checked;
+  if (show_contour_labels == false) {
+    document.querySelector('.labelColor-container').style.display = 'none';
+    document.querySelector('.labelFontSize-container').style.display = 'none';
+  } else {
+    document.querySelector('.labelColor-container').style.display = 'block';
+    document.querySelector('.labelFontSize-container').style.display = 'block';
+  }
   calculateMap();
 });
 
@@ -366,6 +368,10 @@ async function calculateMap() {
     isWorkerCompleted = true;
     hideLoading();
     drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
+    xMinLimit.value = xMin.toFixed(0);
+    xMaxLimit.value = xMax.toFixed(0);
+    yMinLimit.value = yMin.toFixed(0);
+    yMaxLimit.value = yMax.toFixed(0);
     zMinLimit.value = zMin.toFixed(1);
     zMaxLimit.value = zMax.toFixed(1);
     configurationContainer.style.display = 'grid';
@@ -418,7 +424,7 @@ function drawMap(zGrid, xGrid, yGrid) {
       size: scatter_marker_size,
     },
     text: wellNames,
-    textposition: scatter_marker_text_position,
+    textposition: 'top left',
     textfont: {
       size: scatter_marker_size,
       color: scatter_marker_color,
@@ -428,7 +434,7 @@ function drawMap(zGrid, xGrid, yGrid) {
 
   let layout = {
     title: {
-      text: mapName,
+      text: mapNaming,
       font: { size: 18, color: 'black' },
     },
     xaxis: {
@@ -472,3 +478,93 @@ function hideLoading() {
   loadingIndicator.style.display = 'none';
   map.style.display = 'block';
 }
+
+reset.addEventListener('click', function (e) {
+  mapType = 'contour';
+  document.getElementById('contour').checked = true;
+  document.querySelector('.settings-right').style.display = 'block';
+
+  algorithm = 'kriging';
+  algorithmDropdown.value = 'kriging';
+  document.querySelector('.idwPow-container').style.display = 'none';
+
+  kriging_model = 'spherical';
+  krigingModelDropdown.value = 'spherical';
+
+  sigma2 = 0;
+  errorVariance.value = 0;
+
+  alpha = 100;
+  spatialRange.value = 100;
+  spatialRangeValue.innerText = 100;
+
+  idwPower = 2;
+  idwPow.value = 2;
+
+  gridSize = 100;
+  gridSizeDropdown.value = '100';
+
+  map_color = 'saturation';
+  mapColorDropdown.value = 'saturation';
+
+  scatter_marker_size = 12;
+  markerSize.value = '12';
+
+  scatter_marker_color = 'black';
+  markerColor.value = '#000000';
+
+  xMin = Math.min(...x) - 1000;
+  xMinLimit.value = xMin.toFixed(0);
+
+  xMax = Math.max(...x) + 1000;
+  xMaxLimit.value = xMax.toFixed(0);
+
+  yMin = Math.min(...y) - 1000;
+  yMinLimit.value = yMin.toFixed(0);
+
+  yMax = Math.max(...y) + 1000;
+  yMaxLimit.value = yMax.toFixed(0);
+
+  zMin = Math.min(...z);
+  zMinLimit.value = zMin.toFixed(1);
+
+  zMax = Math.max(...z);
+  zMaxLimit.value = zMax.toFixed(1);
+
+  zStepSize = 1;
+  zStep.value = 1;
+
+  contour_map_coloring = 'fill';
+  contourMapColoringDropdown.value = 'fill';
+  document.querySelector('.showLines-container').style.display = 'block';
+
+  show_contour_lines = true;
+  showLinesCheckbox.checked = true;
+
+  contour_line_color = '#808080';
+  contourLineColor.value = '#808080';
+  document.querySelector('.contourLineColor-container').style.display = 'block';
+
+  contour_line_width = 0.5;
+  contourLineWidthDropdown.value = '0.5';
+
+  contour_line_smoothing = 0;
+  smoothing.value = 0;
+  smoothingValue.innerText = 0;
+
+  show_contour_labels = true;
+  showLabelsCheckbox.checked = true;
+
+  contour_label_color = '#808080';
+  labelColor.value = '#808080';
+  document.querySelector('.labelColor-container').style.display = 'block';
+
+  contour_label_font_size = 14;
+  labelFontSizeDropdown.value = 14;
+  document.querySelector('.labelFontSize-container').style.display = 'block';
+
+  mapNaming = 'Iso-Map';
+  mapName.value = 'Iso-Map';
+
+  calculateMap();
+});
