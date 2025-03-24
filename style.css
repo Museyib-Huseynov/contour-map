@@ -97,10 +97,11 @@
   border: 1px solid gray;
   border-radius: 10px;
   margin-bottom: 10px;
+  overflow-y: auto;
 }
 
 .settings h1 {
-  text-align: center;
+  text-align: left;
   font-size: 20px;
   grid-area: 1 / 1 / 2 / 3;
 }
@@ -128,7 +129,7 @@
 .xLimits-container label,
 .yLimits-container label {
   display: inline-block;
-  width: 190px;
+  width: 200px;
   text-align: right;
   font-size: 14px;
 }
@@ -190,7 +191,7 @@
 #idwPow {
   vertical-align: middle;
   margin-left: 5px;
-  width: 90px;
+  width: 100px;
   padding: 2px;
   font-size: 14px;
 }
@@ -224,12 +225,12 @@ input::-webkit-inner-spin-button {
 }
 
 #reset {
+  width: 100px;
   position: relative;
-  left: 140px;
+  left: 215px;
   padding: 10px;
   border-radius: 5px;
   outline: none;
-  /* border: none; */
   cursor: pointer;
 }
 
@@ -266,4 +267,35 @@ input::-webkit-inner-spin-button {
 
 span {
   font-size: 14px;
+}
+
+@media (max-width: 1400px) {
+  .mapTypeRadio-container label,
+  .gridSizeDropdown-container label,
+  .mapColorDropdown-container label,
+  .contourMapColoring-container label,
+  .showLabels-container label,
+  .zLimits-container label,
+  .zStep-container label,
+  .contourLineColor-container label,
+  .contourLineWidth-container label,
+  .smoothing-container label,
+  .showLines-container label,
+  .labelColor-container label,
+  .labelFontSize-container label,
+  .algorithm-container label,
+  .krigingModel-container label,
+  .errorVariance-container label,
+  .spatialRange-container label,
+  .markerSize-container label,
+  .markerColor-container label,
+  .idwPow-container label,
+  .xLimits-container label,
+  .yLimits-container label {
+    width: 120px;
+  }
+
+  #reset {
+    left: 135px;
+  }
 }
