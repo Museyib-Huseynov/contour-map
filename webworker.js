@@ -9,18 +9,13 @@ self.onmessage = function (e) {
     sigma2,
     alpha,
     idwPower,
-    xMinExtend,
-    xMaxExtend,
-    yMinExtend,
-    yMaxExtend,
+    xMin,
+    xMax,
+    yMin,
+    yMax,
   } = e.data;
 
   importScripts('https://unpkg.com/@sakitam-gis/kriging/dist/kriging.js');
-
-  let xMin = Math.min(...x) - xMinExtend;
-  let xMax = Math.max(...x) + xMaxExtend;
-  let yMin = Math.min(...y) - yMinExtend;
-  let yMax = Math.max(...y) + yMaxExtend;
 
   let xRange = [xMin, xMax];
   let yRange = [yMin, yMax];

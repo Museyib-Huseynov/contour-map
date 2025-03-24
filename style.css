@@ -124,7 +124,9 @@
 .spatialRange-container label,
 .markerSize-container label,
 .markerColor-container label,
-.idwPow-container label {
+.idwPow-container label,
+.xLimits-container label,
+.yLimits-container label {
   display: inline-block;
   width: 190px;
   text-align: right;
@@ -133,7 +135,7 @@
 
 .mapTypeRadio-container input {
   vertical-align: middle;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 .mapTypeRadio-container div {
@@ -158,13 +160,19 @@
 .spatialRange-container,
 .markerSize-container,
 .markerColor-container,
-.idwPow-container {
-  margin: 20px 0;
+.idwPow-container,
+.xLimits-container,
+.yLimits-container {
+  margin: 15px 0;
 }
 
 #gridSizeDropdown,
 #mapColorDropdown,
 #contourMapColoringDropdown,
+#xMinLimit,
+#xMaxLimit,
+#yMinLimit,
+#yMaxLimit,
 #zMinLimit,
 #zMaxLimit,
 #zStep,
@@ -181,12 +189,16 @@
 #markerColor,
 #idwPow {
   vertical-align: middle;
-  margin-left: 10px;
+  margin-left: 5px;
   width: 90px;
   padding: 2px;
   font-size: 14px;
 }
 
+#xMinLimit,
+#xMaxLimit,
+#yMinLimit,
+#yMaxLimit,
 #zMinLimit,
 #zMaxLimit,
 #zStep,
@@ -206,14 +218,14 @@ input::-webkit-inner-spin-button {
 
 #showLabelsCheckbox,
 #showLinesCheckbox {
-  margin-left: 14px;
+  margin-left: 9px;
   vertical-align: middle;
   transform: scale(1.5);
 }
 
 #reset {
   position: relative;
-  left: 210px;
+  left: 140px;
   padding: 10px;
   border-radius: 5px;
   outline: none;

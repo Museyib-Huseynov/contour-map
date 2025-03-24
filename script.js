@@ -59,6 +59,12 @@ const depthColor = [
 let x,
   y,
   z,
+  xMin,
+  xMax,
+  yMin,
+  yMax,
+  zMin,
+  zMax,
   wellNames,
   algorithm = 'kriging',
   kriging_model = 'spherical',
@@ -82,13 +88,7 @@ let x,
   show_contour_labels = true,
   contour_label_color = '#808080',
   contour_label_font_size = 14,
-  zStart,
-  zEnd,
   zStepSize = 1,
-  xMinExtend = 1000,
-  xMaxExtend = 1000,
-  yMinExtend = 1000,
-  yMaxExtend = 1000,
   scatter_marker_color = 'black',
   scatter_marker_size = 12,
   scatter_marker_text_position = 'top left',
@@ -114,8 +114,12 @@ fileInput.addEventListener('change', function (e) {
     z = parsedData.map((i) => i.z);
     wellNames = parsedData.map((i) => i.wellNames);
 
-    zStart = Math.min(...z);
-    zEnd = Math.max(...z);
+    xMin = Math.min(...x) - 1000;
+    xMax = Math.max(...x) + 1000;
+    yMin = Math.min(...y) - 1000;
+    yMax = Math.max(...y) + 1000;
+    zMin = Math.min(...z);
+    zMax = Math.max(...z);
 
     calculateMap();
   };
@@ -237,12 +241,12 @@ showLabelsCheckbox.addEventListener('change', function (e) {
 });
 
 zMinLimit.addEventListener('change', function (e) {
-  zStart = this.value;
+  zMin = this.value;
   calculateMap();
 });
 
 zMaxLimit.addEventListener('change', function (e) {
-  zEnd = this.value;
+  zMax = this.value;
   calculateMap();
 });
 
@@ -273,13 +277,9 @@ reset.addEventListener('click', function (e) {
   show_contour_labels = true;
   contour_label_color = '#808080';
   contour_label_font_size = 14;
-  zStart = Math.min(...z);
-  zEnd = Math.max(...z);
+  zMin = Math.min(...z);
+  zMax = Math.max(...z);
   zStepSize = 1;
-  xMinExtend = 1000;
-  xMaxExtend = 1000;
-  yMinExtend = 1000;
-  yMaxExtend = 1000;
   scatter_marker_color = 'black';
   scatter_marker_size = 12;
   scatter_marker_text_position = 'top left';
@@ -337,10 +337,10 @@ async function calculateMap() {
     sigma2,
     alpha,
     idwPower,
-    xMinExtend,
-    xMaxExtend,
-    yMinExtend,
-    yMaxExtend,
+    xMin,
+    xMax,
+    yMin,
+    yMax,
   };
 
   if (
@@ -366,8 +366,8 @@ async function calculateMap() {
     isWorkerCompleted = true;
     hideLoading();
     drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
-    zMinLimit.value = zStart.toFixed(1);
-    zMaxLimit.value = zEnd.toFixed(1);
+    zMinLimit.value = zMin.toFixed(1);
+    zMaxLimit.value = zMax.toFixed(1);
     configurationContainer.style.display = 'grid';
   };
 }
@@ -393,8 +393,8 @@ function drawMap(zGrid, xGrid, yGrid) {
         color: contour_label_color,
         size: contour_label_font_size,
       },
-      start: zStart,
-      end: zEnd,
+      start: zMin,
+      end: zMax,
       size: zStepSize,
     },
     line: {
@@ -402,8 +402,8 @@ function drawMap(zGrid, xGrid, yGrid) {
       width: contour_line_width,
       smoothing: contour_line_smoothing,
     },
-    zmin: zStart,
-    zmax: zEnd,
+    zmin: zMin,
+    zmax: zMax,
     showlegend: false,
   };
 
@@ -434,12 +434,12 @@ function drawMap(zGrid, xGrid, yGrid) {
     xaxis: {
       visible: true,
       tickformat: '.0f',
-      range: [Math.min(...x) - xMinExtend, Math.max(...x) + xMaxExtend],
+      range: [xMin, xMax],
     },
     yaxis: {
       visible: true,
       tickformat: '.0f',
-      range: [Math.min(...y) - yMinExtend, Math.max(...y) + yMaxExtend],
+      range: [yMin, yMax],
     },
   };
 
