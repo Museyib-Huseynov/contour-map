@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map</title>
+    <style>
+            *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Courier New', monospace;
+        font-size: 16px;
+        user-select: none;
+      }
+
+      .modebar {
+        left: 0;
+      }
+
+      .modebar-btn {
+        transform: scale(1.5); /* Makes buttons 1.5x bigger */
+      }
+
+      .modebar-btn svg {
+        width: 30px !important;
+        height: 30px !important;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        place-items: center;
+      }
+
+      .left-sub-container,
+      .right-sub-container {
+        width: 100%;
+        height: 100vh;
+        border: 2px solid grey;
+      }
+
+      .left-sub-container {
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        padding: 0 10px;
+      }
+
+      .readme h1 {
+        font-size: 24px;
+      }
+
+      .readme ul {
+        margin-left: 20px;
+        font-style: italic;
+      }
+
+      .file-upload-container {
+        margin: 20px 0;
+        width: fit-content;
+        position: relative;
+      }
+
+      .file-upload-label {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 20px;
+        border: 2px solid #007bff;
+        border-radius: 5px;
+        background-color: #ffffff;
+        color: #007bff;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+        letter-spacing: 3px;
+        font-weight: bold;
+      }
+
+      .file-upload-label:hover {
+        background-color: #e7f0ff;
+        border-color: #0056b3;
+      }
+
+      .file-upload-label:active {
+        background-color: #d6e4ff;
+      }
+
+      .upload-icon {
+        margin-right: 8px;
+        font-size: 24px;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .settings {
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 40px 1fr;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid gray;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        overflow-y: auto;
+      }
+
+      .settings h1 {
+        text-align: center;
+        font-size: 20px;
+        grid-area: 1 / 1 / 2 / 3;
+      }
+
+      .mapTypeRadio-container label,
+      .gridSizeDropdown-container label,
+      .mapColorDropdown-container label,
+      .contourMapColoring-container label,
+      .showLabels-container label,
+      .zLimits-container label,
+      .zStep-container label,
+      .contourLineColor-container label,
+      .contourLineWidth-container label,
+      .smoothing-container label,
+      .showLines-container label,
+      .labelColor-container label,
+      .labelFontSize-container label,
+      .algorithm-container label,
+      .krigingModel-container label,
+      .errorVariance-container label,
+      .spatialRange-container label,
+      .markerSize-container label,
+      .markerColor-container label,
+      .idwPow-container label,
+      .xLimits-container label,
+      .yLimits-container label,
+      .mapName-container label {
+        display: inline-block;
+        width: 180px;
+        text-align: right;
+        font-size: 14px;
+      }
+
+      .mapTypeRadio-container input {
+        vertical-align: middle;
+        margin-left: 5px;
+      }
+
+      .mapTypeRadio-container div {
+        margin-bottom: 10px;
+      }
+
+      .gridSizeDropdown-container,
+      .mapColorDropdown-container,
+      .contourMapColoring-container,
+      .showLabels-container,
+      .zLimits-container,
+      .zStep-container,
+      .contourLineColor-container,
+      .contourLineWidth-container,
+      .smoothing-container,
+      .showLines-container,
+      .labelColor-container,
+      .labelFontSize-container,
+      .algorithm-container,
+      .krigingModel-container,
+      .errorVariance-container,
+      .spatialRange-container,
+      .markerSize-container,
+      .markerColor-container,
+      .idwPow-container,
+      .xLimits-container,
+      .yLimits-container,
+      .mapName-container {
+        margin: 12px 0;
+      }
+
+      #gridSizeDropdown,
+      #mapColorDropdown,
+      #contourMapColoringDropdown,
+      #xMinLimit,
+      #xMaxLimit,
+      #yMinLimit,
+      #yMaxLimit,
+      #zMinLimit,
+      #zMaxLimit,
+      #zStep,
+      #contourLineColor,
+      #contourLineWidthDropdown,
+      #smoothing,
+      #labelColor,
+      #labelFontSizeDropdown,
+      #algorithmDropdown,
+      #krigingModelDropdown,
+      #errorVariance,
+      #spatialRange,
+      #markerSize,
+      #markerColor,
+      #idwPow,
+      #mapName {
+        vertical-align: middle;
+        margin-left: 5px;
+        width: 100px;
+        padding: 2px;
+        font-size: 14px;
+      }
+
+      #xMinLimit,
+      #xMaxLimit,
+      #yMinLimit,
+      #yMaxLimit,
+      #zMinLimit,
+      #zMaxLimit,
+      #zStep,
+      #contourLineWidthDropdown,
+      #labelFontSizeDropdown,
+      #errorVariance,
+      #markerSize,
+      #idwPow {
+        text-align: center;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      #showLabelsCheckbox,
+      #showLinesCheckbox {
+        margin-left: 9px;
+        vertical-align: middle;
+        transform: scale(1.5);
+      }
+
+      #reset {
+        width: 100px;
+        position: relative;
+        left: 195px;
+        padding: 10px;
+        border-radius: 5px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .right-sub-container {
+        display: grid;
+        place-items: center;
+      }
+
+      #map {
+        background-color: lightblue;
+        width: 100%;
+        height: 100%;
+      }
+
+      .spinner {
+        display: none;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid lightblue;
+        width: 240px;
+        height: 240px;
+        animation: spin 1s linear infinite;
+        z-index: 1000;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      span {
+        font-size: 14px;
+      }
+
+      @media (max-width: 1400px) {
+        .mapTypeRadio-container label,
+        .gridSizeDropdown-container label,
+        .mapColorDropdown-container label,
+        .contourMapColoring-container label,
+        .showLabels-container label,
+        .zLimits-container label,
+        .zStep-container label,
+        .contourLineColor-container label,
+        .contourLineWidth-container label,
+        .smoothing-container label,
+        .showLines-container label,
+        .labelColor-container label,
+        .labelFontSize-container label,
+        .algorithm-container label,
+        .krigingModel-container label,
+        .errorVariance-container label,
+        .spatialRange-container label,
+        .markerSize-container label,
+        .markerColor-container label,
+        .idwPow-container label,
+        .xLimits-container label,
+        .yLimits-container label,
+        .mapName-container label {
+          width: 120px;
+        }
+
+        #reset {
+          left: 135px;
+        }
+      }
+    </style>
+    <script
+      src="https://cdn.plot.ly/plotly-3.0.0.min.js"
+      charset="utf-8"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left-sub-container">
+        <div class="readme">
+          <h1>README</h1>
+          <p>Rules for uploading Excel file (.xlsx):</p>
+          <ul>
+            <li>Only the first sheet will be parsed;</li>
+            <li>4 columns required;</li>
+            <li>
+              First row is for headers: wellNames, x, y, z (order does not
+              matter);
+            </li>
+            <li>x (East), y (North) are coordinates;</li>
+            <li>z might be pressure, water cut, TVD etc.</li>
+          </ul>
+        </div>
+        <div class="file-upload-container">
+          <label for="fileInput" class="file-upload-label">
+            <span class="upload-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="green"
+                  d="M6 2C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5zM8.5 10h2L12 12l1.5-2h2L13 14l2.5 4h-2L12 16l-1.5 2h-2L10 14l-2.5-4z"
+                />
+              </svg>
+            </span>
+            <span class="upload-text">IMPORT EXCEL</span>
+          </label>
+          <input id="fileInput" type="file" class="file-input" />
+        </div>
+        <div class="settings">
+          <h1>Map Settings</h1>
+
+          <div class="settings-left">
+            <div class="mapTypeRadio-container">
+              <div>
+                <label for="contour">Contour-Map</label>
+                <input
+                  type="radio"
+                  id="contour"
+                  name="mapType"
+                  value="contour"
+                  checked
+                />
+              </div>
+              <div>
+                <label for="heatmap">Heat-Map</label>
+                <input
+                  type="radio"
+                  id="heatmap"
+                  name="mapType"
+                  value="heatmap"
+                />
+              </div>
+            </div>
+
+            <div class="algorithm-container">
+              <label for="algorithmDropdown">Algorithm</label>
+              <select id="algorithmDropdown">
+                <option value="kriging" selected>Kriging</option>
+                <option value="IDW">Inverse Distance Weighting</option>
+              </select>
+            </div>
+
+            <div class="idwPow-container" style="display: none">
+              <label for="idwPow">IDW power</label>
+              <input
+                type="number"
+                id="idwPow"
+                value="2"
+                max="4"
+                min="0"
+                step="0.1"
+                title="The higher the power, the more influence nearby points have, while the lower the power, the more distant points influence the result."
+              />
+              <span>(0-4)</span>
+            </div>
+
+            <div class="krigingModel-container">
+              <label for="krigingModelDropdown">Variogram model</label>
+              <select id="krigingModelDropdown">
+                <option value="spherical" selected>Spherical</option>
+                <option value="exponential">Exponential</option>
+                <option value="gaussian">Gaussian</option>
+              </select>
+            </div>
+
+            <div class="errorVariance-container">
+              <label for="errorVariance">Error Variance (σ²)</label>
+              <input
+                type="number"
+                id="errorVariance"
+                value="0"
+                max="10"
+                min="0"
+                title="Controls the noise level in the data. 0 = No Error. 0-1 = Low Noise. 1-10 = More Noise."
+              />
+              <span>(0-10)</span>
+            </div>
+
+            <div class="spatialRange-container">
+              <label for="spatialRange">Spatial Range (α)</label>
+              <input
+                id="spatialRange"
+                type="range"
+                min="10"
+                max="500"
+                step="1"
+                value="100"
+                title="Defines how far spatial correlation extends. Higher values result in smoother interpolation."
+              />
+              <span id="spatialRangeValue">100</span>
+            </div>
+
+            <div class="gridSizeDropdown-container">
+              <label for="gridSizeDropdown">Grid Size</label>
+              <select id="gridSizeDropdown">
+                <option value="10">10 x 10</option>
+                <option value="50">50 x 50</option>
+                <option value="100" selected>100 x 100</option>
+                <option value="200">200 x 200</option>
+                <option value="500">500 x 500</option>
+                <option value="1000">1000 x 1000</option>
+              </select>
+            </div>
+
+            <div class="mapColorDropdown-container">
+              <label for="mapColorDropdown">Map color</label>
+              <select id="mapColorDropdown">
+                <option value="saturation" selected>saturation</option>
+                <option value="pressure">pressure</option>
+                <option value="depth">depth</option>
+              </select>
+            </div>
+
+            <div class="markerSize-container">
+              <label for="markerSize">Marker size</label>
+              <select id="markerSize">
+                <option value="8">8</option>
+                <option value="10">10</option>
+                <option value="12" selected>12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+                <option value="20">20</option>
+              </select>
+            </div>
+
+            <div class="markerColor-container">
+              <label for="markerColor">Marker color</label>
+              <input type="color" id="markerColor" value="#000000" />
+            </div>
+
+            <div class="xLimits-container">
+              <div>
+                <label for="xMinLimit">x-min</label>
+                <input type="number" id="xMinLimit" />
+              </div>
+              <div style="margin-top: 5px;">
+                <label for="xMaxLimit">x-max</label>
+                <input type="number" id="xMaxLimit" />
+              </div>
+            </div>
+
+            <div class="yLimits-container">
+              <div>
+                <label for="yMinLimit">y-min</label>
+                <input type="number" id="yMinLimit" />
+              </div>
+              <div style="margin-top: 5px;">
+                <label for="yMaxLimit">y-max</label>
+                <input type="number" id="yMaxLimit" />
+              </div>
+            </div>
+
+            <div class="zLimits-container">
+              <div>
+                <label for="zMinLimit">z-min</label>
+                <input type="number" id="zMinLimit" />
+              </div>
+              <div style="margin-top: 5px;">
+                <label for="zMaxLimit">z-max</label>
+                <input type="number" id="zMaxLimit" />
+              </div>
+            </div>
+
+            <div class="mapName-container">
+              <label for="mapName">map Name</label>
+              <input type="text" id="mapName" value="Iso-Map" />
+            </div>
+
+            <button type="button" id="reset">Reset</button>
+          </div>
+
+          <div class="settings-right">
+            <div class="zStep-container">
+              <label for="zStep">z-step</label>
+              <input type="number" id="zStep" />
+            </div>
+
+            <div class="contourMapColoring-container">
+              <label for="contourMapColoringDropdown">Coloring</label>
+              <select id="contourMapColoringDropdown">
+                <option value="fill" selected>fill</option>
+                <option value="lines">lines</option>
+                <option value="none">none</option>
+              </select>
+            </div>
+
+            <div class="showLines-container">
+              <label for="showLinesCheckbox">Show Lines</label>
+              <input type="checkbox" id="showLinesCheckbox" checked />
+            </div>
+
+            <div class="contourLineColor-container">
+              <label for="contourLineColor">Line color</label>
+              <input type="color" id="contourLineColor" value="#808080" />
+            </div>
+
+            <div class="contourLineWidth-container">
+              <label for="contourLineWidthDropdown">Line width</label>
+              <select id="contourLineWidthDropdown">
+                <option value="0.1">0.1</option>
+                <option value="0.5" selected>0.5</option>
+                <option value="0.8">0.8</option>
+                <option value="1">1</option>
+                <option value="1.3">1.3</option>
+                <option value="1.6">1.6</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+
+            <div class="smoothing-container">
+              <label for="smoothing">Smoothing</label>
+              <input
+                id="smoothing"
+                type="range"
+                min="0"
+                max="1.3"
+                step="0.1"
+                value="0"
+              />
+              <span id="smoothingValue">0</span>
+            </div>
+
+            <div class="showLabels-container">
+              <label for="showLabelsCheckbox">Show Labels</label>
+              <input type="checkbox" id="showLabelsCheckbox" checked />
+            </div>
+
+            <div class="labelColor-container">
+              <label for="labelColor">Label color</label>
+              <input type="color" id="labelColor" value="#808080" />
+            </div>
+
+            <div class="labelFontSize-container">
+              <label for="labelFontSizeDropdown">Label font size</label>
+              <select id="labelFontSizeDropdown">
+                <option value="8">8</option>
+                <option value="10">10</option>
+                <option value="12">12</option>
+                <option value="14" selected>14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+                <option value="20">20</option>
+                <option value="24">24</option>
+                <option value="28">28</option>
+                <option value="32">32</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="right-sub-container">
+        <div id="map"></div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      const map = document.getElementById('map');
+      const fileInput = document.getElementById('fileInput');
+      const loadingIndicator = document.querySelector('.spinner');
+      const configurationContainer = document.querySelector('.settings');
+      const gridSizeDropdown = document.getElementById('gridSizeDropdown');
+      const mapColorDropdown = document.getElementById('mapColorDropdown');
+      const contourMapColoringDropdown = document.getElementById(
+        'contourMapColoringDropdown'
+      );
+      const showLabelsCheckbox = document.getElementById('showLabelsCheckbox');
+      const showLinesCheckbox = document.getElementById('showLinesCheckbox');
+      const zMinLimit = document.getElementById('zMinLimit');
+      const zMaxLimit = document.getElementById('zMaxLimit');
+      const zStep = document.getElementById('zStep');
+      const contourLineColor = document.getElementById('contourLineColor');
+      const contourLineWidthDropdown = document.getElementById(
+        'contourLineWidthDropdown'
+      );
+      const smoothing = document.getElementById('smoothing');
+      const smoothingValue = document.getElementById('smoothingValue');
+      const labelColor = document.getElementById('labelColor');
+      const labelFontSizeDropdown = document.getElementById('labelFontSizeDropdown');
+      const algorithmDropdown = document.getElementById('algorithmDropdown');
+      const krigingModelDropdown = document.getElementById('krigingModelDropdown');
+      const errorVariance = document.getElementById('errorVariance');
+      const spatialRange = document.getElementById('spatialRange');
+      const spatialRangeValue = document.getElementById('spatialRangeValue');
+      const markerSize = document.getElementById('markerSize');
+      const markerColor = document.getElementById('markerColor');
+      const reset = document.getElementById('reset');
+      const idwPow = document.getElementById('idwPow');
+      const xMinLimit = document.getElementById('xMinLimit');
+      const xMaxLimit = document.getElementById('xMaxLimit');
+      const yMinLimit = document.getElementById('yMinLimit');
+      const yMaxLimit = document.getElementById('yMaxLimit');
+      const mapName = document.getElementById('mapName');
+
+      zStep.value = 1;
+
+      const saturationColor = [
+        ['0.0', 'rgb(165,0,38)'],
+        ['0.3', 'rgb(253,174,97)'],
+        ['0.4', 'rgb(224,243,248)'],
+        ['0.6', 'rgb(69,117,180)'],
+        ['1.0', 'rgb(0,0,128)'],
+      ];
+
+      const pressureColor = [
+        ['0.0', 'rgb(0,0,128)'],
+        ['0.3', 'rgb(69,117,180)'],
+        ['0.5', 'rgb(224,243,248)'],
+        ['0.75', 'rgb(253,174,97)'],
+        ['1.0', 'rgb(165,0,38)'],
+      ];
+
+      const depthColor = [
+        ['0.0', 'rgb(255,255,178)'],
+        ['0.3', 'rgb(189,220,175)'],
+        ['0.5', 'rgb(116,173,209)'],
+        ['0.75', 'rgb(49,117,180)'],
+        ['1.0', 'rgb(0,0,128)'],
+      ];
+
+      let x,
+        y,
+        z,
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+        zMin,
+        zMax,
+        wellNames,
+        algorithm = 'kriging',
+        kriging_model = 'spherical',
+        sigma2 = 0,
+        alpha = 100,
+        idwPower = 2,
+        currentWorker = null,
+        lastWorkerParams = null,
+        isWorkerCompleted = false,
+        gridSize = 100,
+        cachedXGrid = null,
+        cachedYGrid = null,
+        cachedZGrid = null,
+        mapType = 'contour',
+        map_color = 'saturation',
+        contour_map_coloring = 'fill',
+        show_contour_lines = true,
+        contour_line_color = '#808080',
+        contour_line_width = 0.5,
+        contour_line_smoothing = 0,
+        show_contour_labels = true,
+        contour_label_color = '#808080',
+        contour_label_font_size = 14,
+        zStepSize = 1,
+        scatter_marker_color = 'black',
+        scatter_marker_size = 12,
+        mapNaming = 'Iso-Map';
+
+      fileInput.addEventListener('change', function (e) {
+        let file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onload = function (e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+
+          const parsedData = XLSX.utils.sheet_to_json(worksheet);
+
+          x = parsedData.map((i) => i.x);
+          y = parsedData.map((i) => i.y);
+          z = parsedData.map((i) => i.z);
+          wellNames = parsedData.map((i) => i.wellNames);
+
+          xMin = Math.min(...x) - 1000;
+          xMax = Math.max(...x) + 1000;
+          yMin = Math.min(...y) - 1000;
+          yMax = Math.max(...y) + 1000;
+          zMin = Math.min(...z);
+          zMax = Math.max(...z);
+
+          calculateMap();
+        };
+        //
+      });
+
+      document.querySelectorAll('input[name="mapType"]').forEach((radio) => {
+        radio.addEventListener('change', function () {
+          mapType = this.value;
+          if (mapType == 'heatmap') {
+            document.querySelector('.settings-right').style.display = 'none';
+          } else {
+            document.querySelector('.settings-right').style.display = 'block';
+          }
+          calculateMap();
+        });
+      });
+
+      algorithmDropdown.addEventListener('change', function (e) {
+        algorithm = this.value;
+        if (algorithm == 'kriging') {
+          document.querySelector('.krigingModel-container').style.display = 'block';
+          document.querySelector('.errorVariance-container').style.display = 'block';
+          document.querySelector('.spatialRange-container').style.display = 'block';
+        } else {
+          document.querySelector('.krigingModel-container').style.display = 'none';
+          document.querySelector('.errorVariance-container').style.display = 'none';
+          document.querySelector('.spatialRange-container').style.display = 'none';
+        }
+        if (algorithm == 'IDW') {
+          document.querySelector('.idwPow-container').style.display = 'block';
+        } else {
+          document.querySelector('.idwPow-container').style.display = 'none';
+        }
+        calculateMap();
+      });
+
+      idwPow.addEventListener('change', function (e) {
+        idwPower = this.value;
+        calculateMap();
+      });
+
+      krigingModelDropdown.addEventListener('change', function (e) {
+        kriging_model = this.value;
+        calculateMap();
+      });
+
+      errorVariance.addEventListener('change', function (e) {
+        this.value = Math.min(10, Math.max(0, parseFloat(this.value) || 0));
+        sigma2 = parseFloat(this.value);
+        calculateMap();
+      });
+
+      spatialRange.addEventListener('change', function (e) {
+        alpha = parseInt(this.value);
+        spatialRangeValue.innerText = alpha;
+        calculateMap();
+      });
+
+      gridSizeDropdown.addEventListener('change', function (e) {
+        gridSize = parseInt(this.value);
+        calculateMap();
+      });
+
+      mapColorDropdown.addEventListener('change', function (e) {
+        map_color = this.value;
+        calculateMap();
+      });
+
+      markerSize.addEventListener('change', function (e) {
+        scatter_marker_size = this.value;
+        calculateMap();
+      });
+
+      markerColor.addEventListener('change', function (e) {
+        scatter_marker_color = this.value;
+        calculateMap();
+      });
+
+      xMinLimit.addEventListener('change', function (e) {
+        xMin = +this.value;
+        calculateMap();
+      });
+
+      xMaxLimit.addEventListener('change', function (e) {
+        xMax = +this.value;
+        calculateMap();
+      });
+
+      yMinLimit.addEventListener('change', function (e) {
+        yMin = +this.value;
+        calculateMap();
+      });
+
+      yMaxLimit.addEventListener('change', function (e) {
+        yMax = +this.value;
+        calculateMap();
+      });
+
+      zMinLimit.addEventListener('change', function (e) {
+        zMin = +this.value;
+        calculateMap();
+      });
+
+      zMaxLimit.addEventListener('change', function (e) {
+        zMax = +this.value;
+        calculateMap();
+      });
+
+      mapName.addEventListener('change', function (e) {
+        mapNaming = this.value;
+        calculateMap();
+      });
+
+      zStep.addEventListener('change', function (e) {
+        zStepSize = parseFloat(this.value);
+        calculateMap();
+      });
+
+      contourMapColoringDropdown.addEventListener('change', function (e) {
+        contour_map_coloring = this.value;
+        if (contour_map_coloring == 'fill') {
+          document.querySelector('.showLines-container').style.display = 'block';
+          showLinesCheckbox.checked = true;
+          show_contour_lines = true;
+        } else {
+          document.querySelector('.showLines-container').style.display = 'none';
+        }
+        if (contour_map_coloring == 'lines') {
+          document.querySelector('.contourLineColor-container').style.display =
+            'none';
+          document.querySelector('.contourLineWidth-container').style.display =
+            'block';
+        } else {
+          document.querySelector('.contourLineColor-container').style.display =
+            'block';
+          document.querySelector('.contourLineWidth-container').style.display =
+            'block';
+        }
+        calculateMap();
+      });
+
+      showLinesCheckbox.addEventListener('change', function (e) {
+        show_contour_lines = this.checked;
+        if (show_contour_lines == false) {
+          document.querySelector('.contourLineColor-container').style.display =
+            'none';
+          document.querySelector('.contourLineWidth-container').style.display =
+            'none';
+        } else {
+          document.querySelector('.contourLineColor-container').style.display =
+            'block';
+          document.querySelector('.contourLineWidth-container').style.display =
+            'block';
+        }
+        calculateMap();
+      });
+
+      contourLineColor.addEventListener('change', function (e) {
+        contour_line_color = this.value;
+        calculateMap();
+      });
+
+      contourLineWidthDropdown.addEventListener('change', function (e) {
+        contour_line_width = this.value;
+        calculateMap();
+      });
+
+      smoothing.addEventListener('change', function (e) {
+        contour_line_smoothing = this.value;
+        smoothingValue.innerText = contour_line_smoothing;
+        calculateMap();
+      });
+
+      showLabelsCheckbox.addEventListener('change', function (e) {
+        show_contour_labels = this.checked;
+        if (show_contour_labels == false) {
+          document.querySelector('.labelColor-container').style.display = 'none';
+          document.querySelector('.labelFontSize-container').style.display = 'none';
+        } else {
+          document.querySelector('.labelColor-container').style.display = 'block';
+          document.querySelector('.labelFontSize-container').style.display = 'block';
+        }
+        calculateMap();
+      });
+
+      labelColor.addEventListener('change', function (e) {
+        contour_label_color = this.value;
+        calculateMap();
+      });
+
+      labelFontSizeDropdown.addEventListener('change', function (e) {
+        contour_label_font_size = this.value;
+        calculateMap();
+      });
+
+      async function calculateMap() {
+        if (currentWorker) {
+          currentWorker.terminate();
+        }
+
+        showLoading();
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        let currentWorkerParams = {
+          x,
+          y,
+          z,
+          gridSize,
+          algorithm,
+          kriging_model,
+          sigma2,
+          alpha,
+          idwPower,
+          xMin,
+          xMax,
+          yMin,
+          yMax,
+        };
+
+        if (
+          lastWorkerParams &&
+          JSON.stringify(lastWorkerParams) == JSON.stringify(currentWorkerParams) &&
+          isWorkerCompleted
+        ) {
+          hideLoading();
+          drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
+          return;
+        }
+
+        lastWorkerParams = currentWorkerParams;
+
+        isWorkerCompleted = false;
+
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        currentWorker = new Worker(URL.createObjectURL(blob));
+        currentWorker.postMessage(currentWorkerParams);
+
+        currentWorker.onmessage = function (e) {
+          cachedXGrid = e.data.xGrid;
+          cachedYGrid = e.data.yGrid;
+          cachedZGrid = e.data.zGrid;
+          isWorkerCompleted = true;
+          hideLoading();
+          drawMap(cachedZGrid, cachedXGrid, cachedYGrid);
+          xMinLimit.value = xMin.toFixed(0);
+          xMaxLimit.value = xMax.toFixed(0);
+          yMinLimit.value = yMin.toFixed(0);
+          yMaxLimit.value = yMax.toFixed(0);
+          zMinLimit.value = zMin.toFixed(1);
+          zMaxLimit.value = zMax.toFixed(1);
+          configurationContainer.style.display = 'grid';
+        };
+      }
+
+      function drawMap(zGrid, xGrid, yGrid) {
+        let mapData = {
+          type: mapType == 'contour' ? 'contour' : 'heatmap',
+          x: xGrid,
+          y: yGrid,
+          z: zGrid,
+          hoverinfo: 'x+y+z',
+          colorscale:
+            map_color == 'saturation'
+              ? saturationColor
+              : map_color == 'pressure'
+              ? pressureColor
+              : depthColor,
+          contours: {
+            coloring: contour_map_coloring,
+            showlines: show_contour_lines,
+            showlabels: show_contour_labels,
+            labelfont: {
+              color: contour_label_color,
+              size: contour_label_font_size,
+            },
+            start: zMin,
+            end: zMax,
+            size: zStepSize,
+          },
+          line: {
+            color: contour_line_color,
+            width: contour_line_width,
+            smoothing: contour_line_smoothing,
+          },
+          zmin: zMin,
+          zmax: zMax,
+          showlegend: false,
+        };
+
+        let scatterData = {
+          x: x,
+          y: y,
+          hoverinfo: 'skip',
+          mode: 'markers+text',
+          type: 'scatter',
+          marker: {
+            color: scatter_marker_color,
+            size: scatter_marker_size,
+          },
+          text: wellNames,
+          textposition: 'top left',
+          textfont: {
+            size: scatter_marker_size,
+            color: scatter_marker_color,
+          },
+          showlegend: false,
+        };
+
+        let layout = {
+          title: {
+            text: mapNaming,
+            font: { size: 18, color: 'black' },
+          },
+          xaxis: {
+            visible: true,
+            tickformat: '.0f',
+            range: [xMin, xMax],
+          },
+          yaxis: {
+            visible: true,
+            tickformat: '.0f',
+            range: [yMin, yMax],
+          },
+        };
+
+        const config = {
+          displayModeBar: true,
+          displaylogo: false,
+          scrollZoom: true,
+          modeBarButtonsToRemove: [
+            'pan2d',
+            'select2d',
+            'lasso2d',
+            'zoom2d',
+            'autoScale2d',
+          ],
+          modeBarButtons: [
+            ['zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'resetScale2d', 'toImage'],
+          ],
+          responsive: true,
+        };
+
+        Plotly.react(map, [mapData, scatterData], layout, config);
+      }
+
+      function showLoading() {
+        map.style.display = 'none';
+        loadingIndicator.style.display = 'block';
+      }
+
+      function hideLoading() {
+        loadingIndicator.style.display = 'none';
+        map.style.display = 'block';
+      }
+
+      reset.addEventListener('click', function (e) {
+        mapType = 'contour';
+        document.getElementById('contour').checked = true;
+        document.querySelector('.settings-right').style.display = 'block';
+
+        algorithm = 'kriging';
+        algorithmDropdown.value = 'kriging';
+        document.querySelector('.idwPow-container').style.display = 'none';
+
+        kriging_model = 'spherical';
+        krigingModelDropdown.value = 'spherical';
+
+        sigma2 = 0;
+        errorVariance.value = 0;
+
+        alpha = 100;
+        spatialRange.value = 100;
+        spatialRangeValue.innerText = 100;
+
+        idwPower = 2;
+        idwPow.value = 2;
+
+        gridSize = 100;
+        gridSizeDropdown.value = '100';
+
+        map_color = 'saturation';
+        mapColorDropdown.value = 'saturation';
+
+        scatter_marker_size = 12;
+        markerSize.value = '12';
+
+        scatter_marker_color = 'black';
+        markerColor.value = '#000000';
+
+        xMin = Math.min(...x) - 1000;
+        xMinLimit.value = xMin.toFixed(0);
+
+        xMax = Math.max(...x) + 1000;
+        xMaxLimit.value = xMax.toFixed(0);
+
+        yMin = Math.min(...y) - 1000;
+        yMinLimit.value = yMin.toFixed(0);
+
+        yMax = Math.max(...y) + 1000;
+        yMaxLimit.value = yMax.toFixed(0);
+
+        zMin = Math.min(...z);
+        zMinLimit.value = zMin.toFixed(1);
+
+        zMax = Math.max(...z);
+        zMaxLimit.value = zMax.toFixed(1);
+
+        zStepSize = 1;
+        zStep.value = 1;
+
+        contour_map_coloring = 'fill';
+        contourMapColoringDropdown.value = 'fill';
+        document.querySelector('.showLines-container').style.display = 'block';
+
+        show_contour_lines = true;
+        showLinesCheckbox.checked = true;
+
+        contour_line_color = '#808080';
+        contourLineColor.value = '#808080';
+        document.querySelector('.contourLineColor-container').style.display = 'block';
+
+        contour_line_width = 0.5;
+        contourLineWidthDropdown.value = '0.5';
+
+        contour_line_smoothing = 0;
+        smoothing.value = 0;
+        smoothingValue.innerText = 0;
+
+        show_contour_labels = true;
+        showLabelsCheckbox.checked = true;
+
+        contour_label_color = '#808080';
+        labelColor.value = '#808080';
+        document.querySelector('.labelColor-container').style.display = 'block';
+
+        contour_label_font_size = 14;
+        labelFontSizeDropdown.value = 14;
+        document.querySelector('.labelFontSize-container').style.display = 'block';
+
+        mapNaming = 'Iso-Map';
+        mapName.value = 'Iso-Map';
+
+        calculateMap();
+      });
+
+      const workerCode = `
+        importScripts('https://unpkg.com/@sakitam-gis/kriging/dist/kriging.js');
+
+        self.onmessage = function (e) {
+          const {
+            x,
+            y,
+            z,
+            gridSize,
+            algorithm,
+            kriging_model,
+            sigma2,
+            alpha,
+            idwPower,
+            xMin,
+            xMax,
+            yMin,
+            yMax,
+          } = e.data;
+
+          let xRange = [xMin, xMax];
+          let yRange = [yMin, yMax];
+
+          let xGrid = Array.from(
+            { length: gridSize },
+            (_, i) => xRange[0] + (i * (xRange[1] - xRange[0])) / gridSize
+          );
+          let yGrid = Array.from(
+            { length: gridSize },
+            (_, i) => yRange[0] + (i * (yRange[1] - yRange[0])) / gridSize
+          );
+
+          let zGrid;
+          if (algorithm == 'kriging') {
+            zGrid = yGrid.map((yVal) =>
+              xGrid.map((xVal) => {
+                return kriging_method(kriging_model, xVal, yVal);
+              })
+            );
+          } else if (algorithm == 'IDW') {
+            zGrid = inverseDistanceWeighting(xGrid, yGrid, x, y, z, idwPower);
+          }
+
+          self.postMessage({ xGrid, yGrid, zGrid });
+
+          function kriging_method(model, xValue, yValue) {
+            let variogram = kriging.train(z, x, y, model, sigma2, alpha);
+            return kriging.predict(xValue, yValue, variogram);
+          }
+
+          function inverseDistanceWeighting(xGrid, yGrid, x, y, z, power) {
+            return yGrid.map((yVal) =>
+              xGrid.map((xVal) => {
+                let numerator = 0;
+                let denominator = 0;
+                let exactMatch = false;
+                for (let i = 0; i < x.length; i++) {
+                  const dx = x[i] - xVal;
+                  const dy = y[i] - yVal;
+                  const distanceSquared = dx * dx + dy * dy;
+                  if (distanceSquared === 0) {
+                    exactMatch = true;
+                    return z[i];
+                  }
+                  const weight = 1 / Math.pow(distanceSquared, power / 2);
+                  numerator += weight * z[i];
+                  denominator += weight;
+                }
+                return exactMatch ? undefined : numerator / denominator;
+              })
+            );
+          }
+        };
+      `;
+    </script>
+  </body>
+</html>
